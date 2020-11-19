@@ -1,25 +1,26 @@
 from flask import Flask, request, jsonify
-import logging
+import logging, requests, os
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
 
 @app.route('/.well-known/openid-configuration', methods=['GET'])
-def wellKnown():
-    res = {}
-    app.logger.info("test")
+def get_openid_configuration():
+    tls_verify = True
+    
+    if os.environ.get("IDP_VERIFY_TLS") == "false":
+        tls_verify = False
 
-    res["token_endpoint"] = "http://idp.example.com/auth/realm/token"
+    response = requests.get("{}/.well-known/openid-configuration".format(os.environ.get("IDP_REALM_URL")), verify=tls_verify)
 
-    return jsonify(res)
+    return response.json()
 
 
 @app.route('/clients/<clientId>', methods=['PUT'])
-def createOrUpdate(clientId):
+def create_or_update(clientId):
     app.logger.info(clientId)
-    app.logger.info(request.data)
 
     return request.data
 
