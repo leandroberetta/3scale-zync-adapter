@@ -12,12 +12,16 @@ def wellKnown():
 
 @app.route('/clients/<clientId>', methods=['PUT'])
 def createOrUpdate(clientId):
-    print(clientId)
-    print(request.data)
+    app.logger.info(clientId)
+    app.logger.info(request.data)
+
+    return request.data
 
 @app.route('/clients/<clientId>', methods=['DELETE'])
 def delete(clientId):
-    print(clientId)
+    app.logger.info(clientId)
+
+    return None
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)  # pragma: no cover
